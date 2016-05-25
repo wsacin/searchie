@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from haystack.views import SearchView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^search/', SearchView(), name='haystack_search'),
 ]
