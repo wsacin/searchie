@@ -1,0 +1,10 @@
+<h1>Base Documents</h1>
+<ul>
+{% for document in object_list %}
+<p>
+    <li><a href="{% url 'base-detail' document.id %}">{{ document.text }}</a></li>
+</p>
+{% empty %}
+    <li>No documents yet.</li>
+{% endfor %}
+</ul>
