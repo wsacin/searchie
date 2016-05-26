@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
+from __future__ import absolute_import
 
 import os
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'haystack',
     'bootstrap3',
     'bootstrap_themes',
+    'djcelery',
 
     'search_base',
 ]
@@ -133,6 +135,17 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
+
+# CELERY SETTINGS
+
+BROKER_URL = 'amqp://guest:guest@localhost//'
+
+#: Only add pickle to this list if your broker is secured
+#: from unwanted access (see userguide/security.html)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 
 BOOTSTRAP3 = {
 
