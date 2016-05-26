@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Update Base Documents{% endblock %}
+
+{% block content %}
+
+<form action="{% url 'base-detail' object.id %}" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+</form>
+<form action="{% url 'base-list' %}" method="get">
+    <input type="submit" value="Back"/>
+</form>
+{% endblock %}

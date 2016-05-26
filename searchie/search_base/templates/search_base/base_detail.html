@@ -1,3 +1,18 @@
-<h1>{{ object.id }}</h1>
+{% extends "base.html" %}
+
+{% block title %}Base Document: {{ object.id }}{% endblock %}
+
+{% block content %}
 <p>Value: {{ object.value }}</p>
 <p>Text: {{ object.text }}</p>
+
+<form action="{% url 'base-update' object.id %}" method="get">
+    <input type="submit" value="Edit" onclick="{% url 'base-update' object.id %}"/>
+</form>
+<form action="{% url 'base-delete' object.id %}" method="get">
+    <input type="submit" value="Delete"/>
+</form>
+<form action="{% url 'base-list' %}" method="get">
+    <input type="submit" value="Back"/>
+</form>
+{% endblock %}

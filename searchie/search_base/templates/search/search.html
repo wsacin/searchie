@@ -1,6 +1,8 @@
-{% block content %}
-    <h2>Search</h2>
+{% extends "base.html" %}
 
+{% block title %}Search Base{{ object.id }}{% endblock %}
+
+{% block content %}
     <form method="get" action=".">
         <table>
             {{ form.as_table }}

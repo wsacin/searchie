@@ -1,0 +1,18 @@
+{% extends 'bootstrap.html' %}
+
+{% load bootstrap3 %}
+
+{% load bootstrap_themes %}
+{% bootstrap_styles theme='flatly' type='min.css' %}
+
+{% block bootstrap3_content %}
+    <div class="container">
+        <h1>{% block title %}(no title){% endblock %}</h1>
+
+
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+
+        {% block content %}(no content){% endblock %}
+    </div>
+
+{% endblock %}

@@ -1,10 +1,14 @@
-<h1>Base Documents</h1>
-<ul>
+{% extends "base.html" %}
+
+{% block title %}Base Documents{% endblock %}
+
+{% block content %}
 {% for document in object_list %}
 <p>
-    <li><a href="{% url 'base-detail' document.id %}">{{ document.text }}</a></li>
+    <li><a href="{% url 'base-detail' document.id %}">{{ document.text|truncatechars:80 }}</a></li>
 </p>
 {% empty %}
     <li>No documents yet.</li>
 {% endfor %}
 </ul>
+{% endblock %}
