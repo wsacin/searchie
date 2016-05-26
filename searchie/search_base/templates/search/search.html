@@ -19,7 +19,7 @@
 
             {% for result in page.object_list %}
                 <p>
-                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.text }}</a>
+                    <a href="{% url 'base-detail' result.object.id %}">{{ result.object.text|truncatechars:80 }}</a>
                 </p>
             {% empty %}
                 <p>No results found.</p>

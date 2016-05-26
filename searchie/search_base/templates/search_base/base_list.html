@@ -11,4 +11,11 @@
     <li>No documents yet.</li>
 {% endfor %}
 </ul>
+
+<form action="{% url 'base-create' %}" method="get">
+    <input type="submit" value="Create Base Document"/>
+</form>
+<form action="{% url 'haystack_search' %}" method="get">
+    <input type="submit" value="Search Base"/>
+</form>
 {% endblock %}
