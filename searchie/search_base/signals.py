@@ -7,11 +7,10 @@ from django.conf import settings
 from pytz import UTC
 
 from .models import Base, Log
-import os.path
-
 
 # signal for update base doc visualization
 visualized_base = Signal(providing_args=["instance"])
+deleted_base_signal = Signal(providing_args=["base_id"])
 
 
 @receiver(visualized_base, sender=Base)
@@ -31,8 +30,7 @@ def model_post_save(sender, **kwargs):
     instance = kwargs['instance']
 
     if kwargs['created']:
-        log = Log(base=instance,
-                  num_views=0,
+        log = Log(num_views=0,
                   last_access=datetime.now(tz=UTC))
         log.save()
         print('Created: {}'.format(instance.__dict__))
@@ -44,4 +42,12 @@ def model_post_save(sender, **kwargs):
 def model_post_delete(sender, **kwargs):
     print('Deleted: {}'.format(kwargs['instance'].__dict__))
 
+
+@receiver(deleted_base_signal)
+def handle_deleted_base(sender, **kwargs):
+    log = Log.objects.get(pk=kwargs['base_id'])
+    log.history += '[' + log.last_access.isoformat() + ']'
+    log.history += ' BASE DOCUMENT DELETED.\n'
+    log.save()
+    print("SIGNAL OF DELETION")
 

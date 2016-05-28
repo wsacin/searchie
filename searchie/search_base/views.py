@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from django.dispatch import Signal
 from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.views.generic import CreateView, UpdateView
 from django.views.generic import DeleteView
 
 from .models import Base
 from .signals import visualized_base
+from .tasks import register_base_deletion
 
 
 class BaseListView(ListView):
@@ -41,7 +40,7 @@ class BaseDetailView(DetailView):
 
 class BaseCreateView(CreateView):
     model = Base
-    fields = ['value','text']
+    fields = ['value', 'text']
     template_name_suffix = '_form'
     success_url = reverse_lazy('base-list')
 
@@ -56,3 +55,10 @@ class BaseUpdateView(UpdateView):
 class BaseDeleteView(DeleteView):
     model = Base
     success_url = reverse_lazy('base-list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        print("BASE DELETE VIEW")
+        print("object.id: " + str(self.object.id))
+        register_base_deletion.delay(self.object.id)
+        return super(BaseDeleteView, self).delete(request, *args, **kwargs)
