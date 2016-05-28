@@ -18,10 +18,9 @@ def handle_visualized_base(sender, **kwargs):
     instance = kwargs['instance']
     log = Log.objects.get(pk=instance.id)
     log.last_access = datetime.now(tz=UTC)
-
+    log.num_views += 1
     log.history += '[' + log.last_access.isoformat() + ']'
     log.history += ' VISUALIZED\n'
-    print('History: \n' + log.history)
     log.save()
 
 
