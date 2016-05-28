@@ -22,19 +22,18 @@ def register_base_deletion(base_id):
 
 
 @shared_task
-def create_base():
-    text = 'hehe hoho'
-    value = random.randint(0, 100)
+def create_base(json_list):
+    bases, logs = [], []
+    for person in json_list:
+        bases.append(Base(text=(person['name'] + ' ' + person['surname']),
+                          value=random.randint(0,100)))
+        logs.append(Log(num_views=0,
+                    last_access=datetime.now(tz=UTC)))
 
-    bases = [Base(text=text, value=i) for i in range(10)]
     Base.objects.bulk_create(bases)
-    print("CREATED 10 BASES")
-
-    logs = [Log(num_views=0,
-                last_access=datetime.now(tz=UTC))
-            for i in range(10)]
     Log.objects.bulk_create(logs)
-    print("WITH 10 LOGS")
+
+    return "CREATED 160 BASES WITH 160 LOGS"
 
 
 @periodic_task(
@@ -43,10 +42,7 @@ def create_base():
     ignore_result=True,
 )
 def add_base():
-    name_list =[ request.text for request in requests.get('http://uinames.com/api/') ]
-
-
-    for i in range(5):
-        create_base.delay()
+    r = requests.get('http://uinames.com/api/?amount=160&region=united states')
+    create_base.delay(r.json())
 
     return "SCHEDULED TASK"
