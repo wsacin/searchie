@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic import CreateView, UpdateView
 from django.views.generic import DeleteView
 
-from .models import Base
+from .models import Base, Log
 from .signals import visualized_base
 from .tasks import register_base_deletion
 
@@ -21,7 +21,7 @@ class BaseListView(ListView):
 
 class BaseDetailView(DetailView):
     model = Base
-    template_name = 'search_base/base_detail.html'
+    template_name_suffix = '_detail'
 
     def get_context_data(self, **kwargs):
         context = super(BaseDetailView, self).get_context_data(**kwargs)
@@ -58,7 +58,15 @@ class BaseDeleteView(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        print("BASE DELETE VIEW")
-        print("object.id: " + str(self.object.id))
         register_base_deletion.delay(self.object.id)
         return super(BaseDeleteView, self).delete(request, *args, **kwargs)
+
+
+class LogDetailView(DetailView):
+    model = Log
+    template_name_suffix = '_detail'
+
+    def get_context_data(self, **kwargs):
+        context = super(LogDetailView, self).get_context_data(**kwargs)
+        context['now'] = datetime.now()
+        return context

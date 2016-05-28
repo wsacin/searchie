@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}Log of Base Document: {{ object.id }}{% endblock %}
+
+{% block content %}
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+<p>Viewed {{ object.num_views }} times.</p>
+<p>Last accessed on {{ object.last_access }}</p>
+<p>History: {{ object.history }}</p>
+
+<form action="{% url 'base-detail' object.id %}" method="get" class="btn btn-secondary">
+    <input type="submit" value="Back" class="btn btn-primary"/>
+</form>
+{% endblock %}
