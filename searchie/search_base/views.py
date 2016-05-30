@@ -1,21 +1,35 @@
 from datetime import datetime
 
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import ListView, DetailView
 from django.views.generic import CreateView, UpdateView
 from django.views.generic import DeleteView
+from haystack.forms import SearchForm
+from haystack.generic_views import SearchView
+from haystack.views import SearchView as OldSearchView
 
 from .models import Base, Log
-from .signals import visualized_base
+from .signals import visualised_base_signal, updated_base_signal
 from .tasks import register_base_deletion
 
 
 class BaseListView(ListView):
     model = Base
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super(BaseListView, self).get_context_data(**kwargs)
         context['now'] = datetime.now()
+        return context
+
+
+class LogListView(ListView):
+    model = Log
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(LogListView, self).get_context_data(**kwargs)
         return context
 
 
@@ -32,8 +46,8 @@ class BaseDetailView(DetailView):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
 
-        visualized_base.send(sender=Base,
-                             instance=self.object)
+        visualised_base_signal.send(sender=Base,
+                                    instance=self.object)
 
         return self.render_to_response(context)
 
@@ -50,6 +64,17 @@ class BaseUpdateView(UpdateView):
     fields = ['value', 'text']
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('base-list')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        new_data = {'value': request.POST['value'],
+                    'text': request.POST['text']}
+
+        updated_base_signal.send(sender=Base,
+                                 instance=self.object,
+                                 new_data=new_data)
+        return super(BaseUpdateView, self).post(request, *args, **kwargs)
 
 
 class BaseDeleteView(DeleteView):
@@ -70,3 +95,28 @@ class LogDetailView(DetailView):
         context = super(LogDetailView, self).get_context_data(**kwargs)
         context['now'] = datetime.now()
         return context
+
+
+class BaseSearchView(SearchView):
+    template_name = 'search_base/base_list.html'
+    form_class = SearchForm
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = super(BaseSearchView, self).get_queryset()
+        return queryset.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(BaseSearchView, self).get_context_data(*args, **kwargs)
+        paginator = Paginator(Base.objects.all(),20)
+        context['object_list'] = paginator.page(1)
+        return context
+
+
+class OldBaseSearchView(OldSearchView):
+    # TODO: Change to newer SearchView
+
+    def extra_context(self):
+        paginator = Paginator(Base.objects.all(), 20)
+
+        return {'object_list': paginator.page(1)}

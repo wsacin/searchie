@@ -1,10 +1,8 @@
 from django.conf.urls import url
-from haystack.views import SearchView
 from .views import *
 
 urlpatterns = [
-    url(r'^$', BaseListView.as_view(), name='base-list'),
-    url(r'^search/', SearchView(), name='haystack_search'),
+    url(r'^$', OldBaseSearchView(), name='base-list'),
     url(r'^(?P<pk>[0-9]+)/$', BaseDetailView.as_view(), name='base-detail'),
 
     url(r'^create/$', BaseCreateView.as_view(), name='base-create'),
