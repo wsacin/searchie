@@ -6,4 +6,4 @@ class SearchBaseConfig(AppConfig):
     verbose_name = 'Search Base Application'
 
     def ready(self):
-        import search_base.signals
+        from . import signals

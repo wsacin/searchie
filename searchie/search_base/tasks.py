@@ -13,10 +13,14 @@ from .models import Log, Base
 
 
 @shared_task
-def register_base_deletion(base_id):
-    log = Log.objects.get(pk=base_id)
-    log.history += '[' + log.last_access.isoformat() + ']'
-    log.history += ' BASE DOCUMENT DELETED.\n'
+def register_base_deletion(base_id,base_value,base_text):
+    timestamp = datetime.utcnow()
+    info = "[{0}] Base document {1} ({2},'{3}') was deleted."\
+        .format(timestamp, base_id, base_value, base_text)
+
+    log = Log(operation='deletion',
+              timestamp=timestamp,
+              text=info)
     log.save()
     return log.history
 
@@ -25,10 +29,19 @@ def register_base_deletion(base_id):
 def create_base(json_list):
     bases, logs = [], []
     for person in json_list:
-        bases.append(Base(text=(person['name'] + ' ' + person['surname']),
-                          value=random.randint(0,100)))
-        logs.append(Log(num_views=0,
-                    last_access=datetime.now(tz=UTC)))
+        value = random.randint(0, 100)
+        text = person['name'] + ' ' + person['surname']
+        timestamp = datetime.utcnow()
+
+        base = Base(text=text, value=value)
+        log = Log(pk=base.pk,
+                  operation='creation',
+                  timestamp=timestamp,
+                  text='[{0}] Base {1} ({2},{3}) created.'
+                        .format(timestamp, base.pk, value, text))
+
+        bases.append(base)
+        logs.append(log)
 
     Base.objects.bulk_create(bases)
     Log.objects.bulk_create(logs)

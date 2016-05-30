@@ -9,44 +9,36 @@ from pytz import UTC
 from .models import Base, Log
 
 # signal for update base doc visualization
-visualized_base = Signal(providing_args=["instance"])
-deleted_base_signal = Signal(providing_args=["base_id"])
+visualised_base_signal = Signal(providing_args=["instance"])
+updated_base_signal = Signal(providing_args=["instance", "new_data"])
 
 
-@receiver(visualized_base, sender=Base)
-def handle_visualized_base(sender, **kwargs):
-    instance = kwargs['instance']
-    log = Log.objects.get(pk=instance.id)
-    log.last_access = datetime.now(tz=UTC)
-    log.num_views += 1
-    log.history += '[' + log.last_access.isoformat() + ']'
-    log.history += ' VISUALIZED\n'
+@receiver(visualised_base_signal, sender=Base)
+def handle_visualised_base(sender, **kwargs):
+    base = kwargs['instance']
+    timestamp = datetime.utcnow()
+
+    log = Log(pk=base.pk,
+              operation='visualisation',
+              timestamp=timestamp,
+              text='[{0}] Base {1} ({2},{3}) visualised.'
+                    .format(timestamp, base.pk, base.value, base.text))
     log.save()
 
 
-@receiver(post_save, sender=Base)
-def model_post_save(sender, **kwargs):
-    instance = kwargs['instance']
+@receiver(updated_base_signal, sender=Base)
+def handle_updated_base(sender, **kwargs):
+    base = kwargs['instance']
+    new_data = kwargs['new_data']
+    timestamp = datetime.utcnow()
+    text = '[{0}] Base {1} ({2},{3}) was updated to ({4},{5})'\
+                .format(timestamp, base.pk,
+                        base.value, base.text,
+                        new_data['value'], new_data['text'])
 
-    if kwargs['created']:
-        log = Log(num_views=0,
-                  last_access=datetime.now(tz=UTC))
-        log.save()
-        print('Created: {}'.format(instance.__dict__))
-    else:
-        print('Saved: {}'.format(instance.__dict__))
-
-
-@receiver(post_delete, sender=Base)
-def model_post_delete(sender, **kwargs):
-    print('Deleted: {}'.format(kwargs['instance'].__dict__))
-
-
-@receiver(deleted_base_signal)
-def handle_deleted_base(sender, **kwargs):
-    log = Log.objects.get(pk=kwargs['base_id'])
-    log.history += '[' + log.last_access.isoformat() + ']'
-    log.history += ' BASE DOCUMENT DELETED.\n'
+    log = Log(pk=base.pk,
+              operation='update',
+              timestamp=timestamp,
+              text=text)
     log.save()
-    print("SIGNAL OF DELETION")
 

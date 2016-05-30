@@ -10,9 +10,9 @@ class Base(models.Model):
 
 
 class Log(models.Model):
-    num_views = models.IntegerField()
-    last_access = models.DateTimeField()
-    history = models.TextField()
+    operation = models.CharField(max_length=20)
+    timestamp = models.DateTimeField()
+    text = models.TextField()
 
     def __unicode__(self):
-        return 'Log ' + str(self.pk)
+        return self.text
