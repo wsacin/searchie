@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Base Document {{ object.id }}</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="{% url 'base-list' %}">Home<span class="sr-only">(current)</span></a>
+                </li>
+
+                <li><a href="{% url 'log-list' %}">Logs</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Value</div>
+  <div class="panel-body">
+    {{ object.value }}
+  </div>
+
+  <div class="panel-heading">
+    <h3 class="panel-title">Text</h3>
+  </div>
+  <div class="panel-body">
+    {{ object.text }}
+  </div>
+</div>
+
+<form action="{% url 'base-update' object.id %}"  method="get" class="btn btn-secondary">
+    <input type="submit" value="Edit" onclick="{% url 'base-update' object.id %}" class="btn btn-primary"/>
+</form>
+<form action="{% url 'base-delete' object.id %}" method="get" class="btn btn-secondary">
+    <input type="submit" value="Delete" class="btn btn-primary"/>
+</form>
+<form action="{% url 'base-list' %}" method="get" class="btn btn-secondary">
+    <input type="submit" value="Back" class="btn btn-primary"/>
+</form>
+{% endblock %}

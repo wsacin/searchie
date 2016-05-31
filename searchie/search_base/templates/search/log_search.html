@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+{% load staticfiles %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'base-list' %}">Base Documents</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active">
+          <a href="{% url 'base-create' %}">Create Base <span class="sr-only">(current)</span></a>
+        </li>
+
+          <li><a href="{% url 'log-list' %}">Logs</a></li>
+      </ul>
+      <form class="navbar-form navbar-left" role="search"
+            action="{% url 'log-list' %}" method="get">
+        <div class="form-group">
+            {% bootstrap_field form.q show_label=False %}
+        </div>
+
+
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+             aria-haspopup="true" aria-expanded="false">Operations <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Creation</a></li>
+            <li><a href="#">Visualisation</a></li>
+            <li><a href="#">Update</a></li>
+            <li><a href="#">Deletion</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+{% if query %}
+
+<ul class="list-group">
+    {% for result in page.object_list %}
+    <!-- NOT COOL, MAN  -->
+    {% if result.object.operation %}
+    <li class="list-group-item">
+
+        {{ result.object.text|truncatechars:120 }}
+        <span class="badge">{{ result.object.operation }}</span>
+    </li>
+    {% endif %}
+    {% empty %}
+    <li class="list-group-item">
+        <p>No results found.</p>
+    </li>
+    {% endfor %}
+</ul>
+
+{% if page.has_previous or page.has_next %}
+<div>
+    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+    |
+    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+</div>
+{% endif %}
+{% else %}
+<ul class="list-group">
+    {% for document in object_list %}
+    <li class="list-group-item">
+        {{ document.text|truncatechars:80 }}
+        <span class="badge">{{ document.operation }}</span>
+    </li>
+    {% empty %}
+    <li>No documents yet.</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+{% endblock %}
