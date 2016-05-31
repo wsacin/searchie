@@ -35,34 +35,45 @@
           <a href="{% url 'base-create' %}">Create Base <span class="sr-only">(current)</span></a>
         </li>
 
-        <li><a href="#">Logs</a></li>
+          <li><a href="{% url 'log-list' %}">Logs</a></li>
       </ul>
       <form class="navbar-form navbar-left" role="search"
-            action="{% url 'base-list' %}" method="get">
+            action="{% url 'log-list' %}" method="get">
         <div class="form-group">
             {% bootstrap_field form.q show_label=False %}
         </div>
 
 
         </form>
-      <ul class="nav navbar-nav navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+             aria-haspopup="true" aria-expanded="false">Operations <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Creation</a></li>
+            <li><a href="#">Visualisation</a></li>
+            <li><a href="#">Update</a></li>
+            <li><a href="#">Deletion</a></li>
+          </ul>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
 
-
-
-
 {% if query %}
 
 <ul class="list-group">
     {% for result in page.object_list %}
+    <!-- NOT COOL, MAN  -->
+    {% if result.object.operation %}
     <li class="list-group-item">
-        <a href="{% url 'base-detail' result.object.id %}">{{ result.object.text|truncatechars:80 }}</a>
-        <span class="badge">{{ document.value }}</span>
+
+        {{ result.object.text|truncatechars:120 }}
+        <span class="badge">{{ result.object.operation }}</span>
     </li>
+    {% endif %}
     {% empty %}
     <li class="list-group-item">
         <p>No results found.</p>
@@ -81,8 +92,8 @@
 <ul class="list-group">
     {% for document in object_list %}
     <li class="list-group-item">
-        <a href="{% url 'base-detail' document.id %}">{{ document.text|truncatechars:80 }}</a>
-        <span class="badge">{{ document.value }}</span>
+        {{ document.text|truncatechars:80 }}
+        <span class="badge">{{ document.operation }}</span>
     </li>
     {% empty %}
     <li>No documents yet.</li>

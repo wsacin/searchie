@@ -7,6 +7,8 @@ from django.views.generic import CreateView, UpdateView
 from django.views.generic import DeleteView
 from haystack.forms import SearchForm
 from haystack.generic_views import SearchView
+from haystack.query import EmptySearchQuerySet, SearchQuerySet
+from haystack.utils.app_loading import haystack_get_model
 from haystack.views import SearchView as OldSearchView
 
 from .models import Base, Log
@@ -83,7 +85,9 @@ class BaseDeleteView(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        register_base_deletion.delay(self.object.id)
+        register_base_deletion.delay(self.object.id,
+                                     self.object.value,
+                                     self.object.text)
         return super(BaseDeleteView, self).delete(request, *args, **kwargs)
 
 
@@ -115,8 +119,19 @@ class BaseSearchView(SearchView):
 
 class OldBaseSearchView(OldSearchView):
     # TODO: Change to newer SearchView
+    template = 'search/base_search.html'
 
     def extra_context(self):
-        paginator = Paginator(Base.objects.all(), 20)
+        paginator = Paginator(Base.objects.all(), 500)
+
+        return {'object_list': paginator.page(1)}
+
+
+class OldLogSearchView(OldSearchView):
+    # TODO: Change to newer SearchView
+    template = 'search/log_search.html'
+
+    def extra_context(self):
+        paginator = Paginator(Log.objects.all(), 500)
 
         return {'object_list': paginator.page(1)}

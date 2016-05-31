@@ -32,7 +32,7 @@
                     <a href="{% url 'base-list' %}">Home<span class="sr-only">(current)</span></a>
                 </li>
 
-                <li><a href="#">Logs</a></li>
+                <li><a href="{% url 'log-list' %}">Logs</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             </ul>
@@ -59,9 +59,6 @@
 </form>
 <form action="{% url 'base-delete' object.id %}" method="get" class="btn btn-secondary">
     <input type="submit" value="Delete" class="btn btn-primary"/>
-</form>
-<form action="{% url 'log-detail' object.id %}" method="get" class="btn btn-secondary">
-    <input type="submit" value="Log" class="btn btn-primary"/>
 </form>
 <form action="{% url 'base-list' %}" method="get" class="btn btn-secondary">
     <input type="submit" value="Back" class="btn btn-primary"/>

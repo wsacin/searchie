@@ -1,9 +1,7 @@
 from datetime import datetime
 
-from django.db.models.signals import post_save, post_delete
 from django.core.signals import Signal
 from django.dispatch import receiver
-from django.conf import settings
 from pytz import UTC
 
 from .models import Base, Log
@@ -16,7 +14,7 @@ updated_base_signal = Signal(providing_args=["instance", "new_data"])
 @receiver(visualised_base_signal, sender=Base)
 def handle_visualised_base(sender, **kwargs):
     base = kwargs['instance']
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(tz=UTC)
 
     log = Log(pk=base.pk,
               operation='visualisation',
@@ -30,7 +28,7 @@ def handle_visualised_base(sender, **kwargs):
 def handle_updated_base(sender, **kwargs):
     base = kwargs['instance']
     new_data = kwargs['new_data']
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(tz=UTC)
     text = '[{0}] Base {1} ({2},{3}) was updated to ({4},{5})'\
                 .format(timestamp, base.pk,
                         base.value, base.text,

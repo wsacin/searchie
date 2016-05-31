@@ -137,6 +137,18 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'haystack',
     },
+    'base': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+        'EXCLUDED_INDEXES': ['search_base.search_indexes.LogIndex'],
+    },
+    'log': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
+        'EXCLUDED_INDEXES': ['search_base.search_indexes.BaseIndex'],
+    },
 }
 
 # CELERY SETTINGS

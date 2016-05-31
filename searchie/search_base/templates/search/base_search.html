@@ -25,7 +25,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Base Documents</a>
+      <a class="navbar-brand" href="{% url 'base-list' %}">Base Documents</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -40,9 +40,11 @@
       <form class="navbar-form navbar-left" role="search"
             action="{% url 'base-list' %}" method="get">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" id="search_text">
+            {% bootstrap_field form.q show_label=False %}
         </div>
-      </form>
+
+
+        </form>
       <ul class="nav navbar-nav navbar-right">
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -50,16 +52,47 @@
 </nav>
 
 
+{% if query %}
+
 <ul class="list-group">
-{% for document in object_list %}
-  <li class="list-group-item">
-    <a href="{% url 'base-detail' document.id %}">{{ document.text|truncatechars:80 }}</a>
-    <span class="badge">{{ document.value }}</span>
-  </li>
-{% empty %}
-    <li>No documents yet.</li>
-{% endfor %}
+    {% for result in page.object_list %}
+        <!-- NOT COOL, MAN  -->
+        {% if not result.object.operation %}
+        <li class="list-group-item">
+            <a href="{% url 'base-detail' result.object.id %}">{{ result.object.text|truncatechars:80 }}</a>
+            <span class="badge">{{ document.value }}</span>
+        </li>
+        {% endif %}
+    {% empty %}
+    <li class="list-group-item">
+        <p>No results found.</p>
+    </li>
+    {% endfor %}
 </ul>
 
-{% endblock %}
+{% if page.has_previous or page.has_next %}
+<div>
+    {% if page.has_previous %}
+        <a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+            {% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+    |
+    {% if page.has_next %}
+        <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+            {% endif %}Next &raquo;{% if page.has_next %}</a>
+    {% endif %}
+</div>
+{% endif %}
+{% else %}
+<ul class="list-group">
+    {% for document in object_list %}
+    <li class="list-group-item">
+        <a href="{% url 'base-detail' document.id %}">{{ document.text|truncatechars:80 }}</a>
+        <span class="badge">{{ document.value }}</span>
+    </li>
+    {% empty %}
+    <li>No documents yet.</li>
+    {% endfor %}
+</ul>
+{% endif %}
 
+{% endblock %}

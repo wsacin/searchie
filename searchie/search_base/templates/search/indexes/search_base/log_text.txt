@@ -1,0 +1,3 @@
+{{ object.timestamp }}
+{{ object.operation }}
+{{ object.text }}

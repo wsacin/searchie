@@ -3,6 +3,7 @@ from .views import *
 
 urlpatterns = [
     url(r'^$', OldBaseSearchView(), name='base-list'),
+    url(r'^logs/$', OldLogSearchView(), name='log-list'),
     url(r'^(?P<pk>[0-9]+)/$', BaseDetailView.as_view(), name='base-detail'),
 
     url(r'^create/$', BaseCreateView.as_view(), name='base-create'),
