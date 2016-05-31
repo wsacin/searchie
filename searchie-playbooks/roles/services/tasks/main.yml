@@ -1,0 +1,29 @@
+---
+- name: Install unit file
+  template: src={{ unit_file }} dest=/lib/systemd/system/ owner=root mode=644
+  sudo: true
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  sudo: true
+  tags:
+      - reloadServices
+
+- name: Enable unit file
+  command: systemctl enable {{ unit_file }}
+  sudo: true
+  tags:
+      - startServices
+
+- name: Stop unit file
+  command: systemctl stop {{ unit_file }}
+  sudo: true
+  tags:
+      - stopServices
+
+- name: Start unit file
+  command: systemctl restart {{ unit_file }}
+  sudo: true
+  tags:
+      - startServices
+

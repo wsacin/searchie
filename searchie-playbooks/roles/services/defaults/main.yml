@@ -1,0 +1,6 @@
+---
+searchie_unit_file: searchie.service
+elasticsearch_unit_file: elasticsearchie.service
+celery_worker_unit_file: celeryWorker.service
+celery_beat_unit_file: celeryBeat.service
+

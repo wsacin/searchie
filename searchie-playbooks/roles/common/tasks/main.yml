@@ -1,0 +1,80 @@
+- name: Update APT cache
+  apt: update_cache=true
+  sudo: true
+
+- name: Install GIT
+  apt: name=git state=latest
+  sudo: true
+
+- name: Install PostgreSQL
+  apt: name=postgresql state=latest
+  sudo: true
+
+- name: Install libpq
+  apt: name=libpq-dev state=latest
+  sudo: true
+
+- name: Install Postgres-contrib
+  apt: name=postgresql-contrib state=latest
+  sudo: true
+
+
+- name: Install RabbitMQ (Celery Broker)
+  apt: name=rabbitmq-server state=latest
+  sudo: true
+
+- name: Install Elasticsearch
+  apt: name=elasticsearch state=latest
+  sudo: true
+
+- name: Install Python3
+  apt: name=python3 state=latest
+  sudo: true
+
+- name: Install python2
+  apt: name=python state=latest
+  sudo: true
+
+- name: Install psycopg2 on python2
+  apt: name=python-psycopg2 state=latest
+  sudo: true
+
+- name: Install ipython3
+  apt: name=python3 state=latest
+  sudo: true
+
+- name: Install Pip3
+  apt: name=python3-pip state=latest
+  sudo: true
+
+- name: Install virtualenv3
+  command: pip3 install virtualenv
+  sudo: true
+
+- name: Create Searchie's virtualenv
+  command: "virtualenv /home/wsa/searchienv"
+
+- name: Install lxml
+  apt: name=libxml2-dev state=latest
+  sudo: true
+
+  apt: name=libxslt1-dev state=latest
+  sudo: true
+
+  apt: name=python3-lxml state=latest
+  sudo: true
+
+- name: Deploy Searchie on Remote Server
+  git: repo=https://github.com/wsacin/searchie.git
+       dest={{ searchie_dir }}
+       accept_hostkey=true
+  tags:
+    - clone
+
+- name: Install requirements.txt
+  pip: 
+    requirements: "/home/wsa/searchie/requirements.txt"
+    virtualenv: "/home/wsa/searchienv"
+    virtualenv_python: python3.5
+  tags:
+    - env
