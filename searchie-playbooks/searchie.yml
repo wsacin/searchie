@@ -1,0 +1,23 @@
+---
+- name: Searchie Playbook
+  user: wsa
+  hosts: webservers
+
+  pre_tasks:
+      - service: name=celeryWorker state=stopped
+        sudo: True
+      - service: name=celeryBeat state=stopped
+        sudo: True
+      - service: name=searchie state=stopped
+        sudo: True
+
+  roles:
+      - { role: common, tags: ["common"] }
+      - { role: postgres, tags: ["postgres"] }
+      - { role: rabbitmq, tags: ["rabbitmq"] }
+
+      - { role: services, unit_file: "searchie.service", working_directory: "{{ searchie_dir }}", tags: ["services"] }
+      - { role: searchie, tags: ["searchie"] }
+      - { role: services, unit_file: "elasticsearchie.service", working_directory: "{{ searchie_dir }}", tags: ["services","elasticsearchie"] }
+      - { role: services, unit_file: "celeryWorker.service", working_directory: "{{ searchienv_dir }}", tags: ["services","celery","worker"] }
+      - { role: services, unit_file: "celeryBeat.service", working_directory: "{{ searchienv_dir }}", tags: ["services","celery","beat"] }

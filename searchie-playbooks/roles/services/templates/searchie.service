@@ -1,0 +1,12 @@
+[Unit]
+Description=Autorun script for the Searchie Web App
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart={{ searchienv_dir }}/bin/python3 {{ searchie_dir }}/searchie/manage.py runserver  107.170.123.96:8080
+Restart=on-failure
+WorkingDirectory={{ working_directory }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Autorun script for the Celery Beat
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart={{ searchienv_dir }}/bin/celery -A {{ application_name }} beat -l info
+Restart=on-failure
+WorkingDirectory={{ searchie_dir }}/searchie
+
+[Install]
+WantedBy=multi-user.target

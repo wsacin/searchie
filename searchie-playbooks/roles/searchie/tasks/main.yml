@@ -1,0 +1,12 @@
+- name: Deploy Searchie on Remote Server
+  git: repo=https://github.com/wsacin/searchie.git
+       dest={{ searchie_dir }}
+       accept_hostkey=true
+  tags:
+    - clone
+
+- name: "Running Cron task for Haystack index update."
+  cron: name="update Haystack index" special_time=reboot
+        job="{{ searchienv_dir }}/bin/python3 {{ searchie_dir }}/searchie/manage.py update_index"
+  tags:
+    - index

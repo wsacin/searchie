@@ -1,0 +1,12 @@
+[Unit]
+Description=Autorun script for Elasticsearch
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/share/elasticsearch/bin/elasticsearch
+Restart=on-failure
+WorkingDirectory=/usr/share/elasticsearch
+
+[Install]
+WantedBy=multi-user.target
